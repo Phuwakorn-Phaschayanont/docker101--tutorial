@@ -1,0 +1,76 @@
+// เช็คเวอร์ชั่น
+docker -v
+
+// เช็คว่าสามารถทำงานได้ที่คอนเทนเนอร์ hello-world
+docker run hello-world
+
+// เช็คสถานะของคอนเทนเนอร์ทั้งหมดที่กำลังทำงาน
+docker ps --all
+
+// เช็ครายชื่ออิมเมจทั้งหมดที่กำลังทำงานและหยุด
+docker images
+
+// เช็คการเชื่อมต่ออินเทอร์เน็ตในคอนเทนเนอร์ โดยใช้คำสั่ง ping ไปยัง google.com
+docker run busybox ping google.com
+
+// หยุดคอนเทนเนอร์ที่กำลังทำงาน โดยใช้คำสั่ง stop ตามด้วย container_id
+docker stop <container_id>
+
+// ดึงอิมเมจจาก Docker Hub โดยใช้คำสั่ง pull ตามด้วยชื่ออิมเมจ
+docker pull <image_name>
+
+// สร้างคอนเทนเนอร์ใหม่จากอิมเมจ busybox โดยใช้คำสั่ง create และตั้งชื่อคอนเทนเนอร์เป็น ping_google
+docker create busybox ping google.com
+
+// เริ่มคอนเทนเนอร์ที่สร้างขึ้นโดยใช้คำสั่ง start ตามด้วย container_id
+docker start <container_id>
+
+// ลบคอนเทนเนอร์ที่ไม่ต้องการ โดยใช้คำสั่ง rm ตามด้วย container_id
+docker rm <container_id>
+
+// เช็คสถานะของคอนเทนเนอร์ที่กำลังทำงาน
+docker ps
+
+// ลบอิมเมจที่ไม่ต้องการอีกต่อไป
+docker system prune
+
+// รันคอนเทนเนอร์ nginx
+docker run nginx
+
+// รันคอนเทนเนอร์ nginx และเชื่อมต่อพอร์ต 80 ของคอนเทนเนอร์กับพอร์ต 8080 ของโฮสต์
+docker exec -it <container_id> sh
+docker exec -it <container_id> bash
+
+// เข้าไปในคอนเทนเนอร์ nginx และดูไฟล์ index.html ที่อยู่ในไดเรกทอรี /usr/share/nginx/html
+cd /user/share/nginx/html
+cat index.html
+
+// รันคอนเทนเนอร์ nginx และเชื่อมต่อพอร์ต 80 ของคอนเทนเนอร์ กับ พอร์ต 80 ของโฮสต์
+docker run -p 80:80 nginx
+
+// รันคอนเทนเนอร์ nginx และเชื่อมต่อพอร์ต 80 ของคอนเทนเนอร์ กับ พอร์ต 9000 ของโฮสต์
+docker run -d -p 9000:80 nginx
+
+// ตรวจสอบว่า nginx ทำงานอยู่หรือไม่ โดยใช้คำสั่ง ps
+docker image inspect nginx
+
+// ดึงอิมเมจของ WordPress, MySQL และ phpMyAdmin จาก Docker Hub #จำเป็นต้องโหลด
+docker pull wordpress
+docker pull mysql:5.7
+docker pull phpmyadmin/phpmyadmin
+
+// สร้างเครือข่ายสำหรับ WordPress โดยใช้คำสั่ง network create ตามด้วยชื่อเครือข่าย
+docker network create wordpress
+
+// เช็คเครือข่ายที่มีอยู่ใน Docker โดยใช้คำสั่ง network ls
+docker network ls
+
+// รันคอนเทนเนอร์ MySQL และเชื่อมต่อกับเครือข่าย wordpress โดยใช้คำสั่ง run ตามด้วยชื่อคอนเทนเนอร์และตัวแปรสภาพแวดล้อมสำหรับการตั้งค่าฐานข้อมูล
+docker run --name mysql --network wordpress -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress -d mysql:5.7
+
+// รันคอนเทนเนอร์ WordPress และเชื่อมต่อกับเครือข่าย wordpress โดยใช้คำสั่ง run ตามด้วยชื่อคอนเทนเนอร์และตัวแปรสภาพแวดล้อมสำหรับการตั้งค่าการเชื่อมต่อฐานข้อมูล
+docker run --name wordpress --network wordpress -p 80:80 -e WORDPRESS_DB_HOST=mysql:3306 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress_db -d wordpress
+
+// รันคอนเทนเนอร์ phpMyAdmin และเชื่อมต่อกับเครือข่าย wordpress โดยใช้คำสั่ง run ตามด้วยชื่อคอนเทนเนอร์และตัวแปรสภาพแวดล้อมสำหรับการตั้งค่าการเข้าถึงฐานข้อมูล
+docker run --name pma --network wordpress -p 8888:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
+2366ee9bb56507a2fe44752223344004b59b289d4efdfad7b93a7a305650df12
