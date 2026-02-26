@@ -1,3 +1,14 @@
+// รหัสเข้า wordpress01
+
+// รหัสเข้า wordpress02
+Yb3eEc4$F@xXZApSMr
+
+// รหัสเข้า wordpress03
+ez@b6K0yui*ey9py&7
+
+// รหัสเข้า phpmyadmin
+tRR%KOB1nY6FOLE1h
+
 // เช็คเวอร์ชั่น
 docker -v
 
@@ -74,3 +85,70 @@ docker run --name wordpress --network wordpress -p 80:80 -e WORDPRESS_DB_HOST=my
 // รันคอนเทนเนอร์ phpMyAdmin และเชื่อมต่อกับเครือข่าย wordpress โดยใช้คำสั่ง run ตามด้วยชื่อคอนเทนเนอร์และตัวแปรสภาพแวดล้อมสำหรับการตั้งค่าการเข้าถึงฐานข้อมูล
 docker run --name pma --network wordpress -p 8888:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
 2366ee9bb56507a2fe44752223344004b59b289d4efdfad7b93a7a305650df12
+
+// Join network
+docker network connect wordpress mysql
+docker network connect wordpress pma
+
+// show network
+docker network inspect wordpress
+
+
+การเก็บข้อมูล
+1. เก็บข้อมูลที่ Conainer
+2. Volume
+3. Bind Mount
+
+
+**แบบที่ 1**
+docker exec -it pma sh
+apt-get update
+apt-get install vim
+vi a.txt กด i พิมพ์ข้อความที่ต้องการแล้วกด esc พิมพ์ :wq เพื่อบันทึกและออกจาก vim
+
+
+**แบบที่ 2 volume**
+// เช็คสถานะของ volume ทั้งหมดที่มีอยู่ใน Docker โดยใช้คำสั่ง volume ls
+docker volume ls
+
+// สร้าง volume สำหรับเก็บข้อมูลของ WordPress และ MySQL โดยใช้คำสั่ง volume create ตามด้วยชื่อ volume
+docker volume create wp_volume
+docker volume create mysql_volume
+
+// ลบ volume ที่ไม่ต้องการอีกต่อไป โดยใช้คำสั่ง volume rm ตามด้วยชื่อ volume
+docker volume rm wp_volume
+docker volume rm mysql_volume
+
+// รันคอนเทนเนอร์ MySQL และเชื่อมต่อกับเครือข่าย wordpress โดยใช้คำสั่ง run ตามด้วยชื่อคอนเทนเนอร์และตัวแปรสภาพแวดล้อมสำหรับการตั้งค่าฐานข้อมูล และเชื่อมต่อ volume mysql_volume กับไดเรกทอรี /var/lib/mysql ในคอนเทนเนอร์
+docker run -d --name mysql02 --network wordpress02 -v mysql_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress02_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress  mysql:5.7
+docker run -d --name wordpress02 --network wordpress02 -v wp_volume:/var/www/html -e WORDPRESS_DB_HOST=mysql02 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress02_db -p 889:80 wordpress
+docker run --name pma02 --network wordpress02 -p 8889:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
+
+
+**แบบที่ 3 Bind Mount**
+docker network create wordpress03
+
+// รันคอนเทนเนอร์ MySQL และเชื่อมต่อกับเครือข่าย wordpress โดยใช้คำสั่ง run ตามด้วยชื่อคอนเทนเนอร์และตัวแปรสภาพแวดล้อมสำหรับการตั้งค่าฐานข้อมูล และเชื่อมต่อไดเรกทอรี C:\docker101\mysql บนโฮสต์กับไดเรกทอรี /var/lib/mysql ในคอนเทนเนอร์
+docker run -d --name mysql03 --network wordpress03 -v C:\docker101\mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress03_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress  mysql:5.7
+docker run -d --name wordpress03 --network wordpress03 -v C:\docker101\wp:/var/www/html -e WORDPRESS_DB_HOST=mysql03 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress03_db -p 890:80 wordpress
+docker run --name pma03 --network wordpress03 -p 8890:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
+
+
+// รันปกติ
+docker-compose up
+
+// รันแบบระบุชื่อ
+docker-compose up -f aaa.yml
+
+// รันแบบยังไม่เริ่มทำงาน
+docker-compose up --no-start
+
+// ปิดและลบ
+docker-compose down
+
+// รันแบบไม่ค้าง
+docker-compose up -d
+
+docker-compose ps
+
+docker-compose start

@@ -1,0 +1,11 @@
+# ข้อมูล MySQL ที่ Docker สร้างขึ้น
+database/
+mysql/
+
+# ไฟล์ WordPress (ถ้าไม่ได้แก้ไขเอง)
+wp/
+
+# ไฟล์ระบบ
+*.log
+.DS_Store
+Thumbs.db
